@@ -25,8 +25,8 @@
  """
 
 import config
+import importlib
 from DISClib.Utils import error as error
-from DISClib.DataStructures import liststructure as lt
 assert config
 
 
@@ -42,11 +42,12 @@ def newList(datastructure='SINGLE_LINKED',
             key=None,
             filename=None,
             delimiter=","):
-    """Crea una lista vacia
+    """Crea una lista vacía
 
     Args:
         datastructure:  Tipo de estructura de datos a utilizar para implementar
-        la lista. Los tipos posibles pueden ser: ARRAY_LIST y SINGLE_LINKED.
+        la lista. Los tipos posibles pueden ser: ARRAY_LIST,
+        SINGLE_LINKED y DOUBLE_LINKED.
 
         cmpfunction: Función de comparación para los elementos de la lista.
         Si no se provee función de comparación se utiliza la función
@@ -54,7 +55,7 @@ def newList(datastructure='SINGLE_LINKED',
         Si se provee una función de comparación el valor de Key debe ser None.
 
         Key:  Identificador utilizado para comparar dos elementos de la lista
-        con la función de comaparación por defecto.
+        con la función de comparación por defecto.
 
         filename: Si se provee este valor, se crea una lista a partir
         de los elementos encontrados en el archivo.
@@ -69,14 +70,21 @@ def newList(datastructure='SINGLE_LINKED',
         Exception
     """
     try:
-        lst = lt.newList(datastructure, cmpfunction, key, filename, delimiter)
+        module = listSelector(datastructure)
+        lst = module.newList(
+            cmpfunction,
+            module,
+            key,
+            filename,
+            delimiter
+        )
         return lst
     except Exception as exp:
         error.reraise(exp, 'TADList->newList: ')
 
 
 def addFirst(lst, element):
-    """Agrega un elemento a la lista en la primera posicion.
+    """Agrega un elemento a la lista en la primera posición.
 
     Agrega un elemento en la primera posición de la lista, se incrementa
     el tamaño de la lista en uno.
@@ -93,7 +101,7 @@ def addFirst(lst, element):
         Exception
     """
     try:
-        lt.addFirst(lst, element)
+        lst['datastructure'].addFirst(lst, element)
     except Exception as exp:
         error.reraise(exp, 'TADList->addFirst: ')
 
@@ -102,7 +110,7 @@ def addLast(lst, element):
     """ Agrega un elemento en la última posición de la lista.
 
     Se adiciona un elemento en la última posición de la lista y se actualiza
-    el apuntador a la útima posición. Se incrementa el tamaño de la lista en 1
+    el apuntador a la última posición. Se incrementa el tamaño de la lista en 1
 
     Args:
         lst: La lista en la que se inserta el elemento
@@ -112,7 +120,7 @@ def addLast(lst, element):
         Exception
     """
     try:
-        lt.addLast(lst, element)
+        lst['datastructure'].addLast(lst, element)
     except Exception as exp:
         error.reraise(exp, 'TADList->addLast: ')
 
@@ -127,7 +135,7 @@ def isEmpty(lst):
         Exception
     """
     try:
-        return lt.isEmpty(lst)
+        return lst['datastructure'].isEmpty(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->isEmpty: ')
 
@@ -142,7 +150,7 @@ def size(lst):
         Exception
     """
     try:
-        return lt.size(lst)
+        return lst['datastructure'].size(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->size: ')
 
@@ -158,13 +166,13 @@ def firstElement(lst):
         Exception
     """
     try:
-        return lt.firstElement(lst)
+        return lst['datastructure'].firstElement(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->firstElement: ')
 
 
 def lastElement(lst):
-    """ Retorna el último elemento de una  lista no vacia.
+    """ Retorna el último elemento de una  lista no vacía.
         No se elimina el elemento.
 
     Args:
@@ -174,7 +182,7 @@ def lastElement(lst):
         Exception
     """
     try:
-        return lt.lastElement(lst)
+        return lst['datastructure'].lastElement(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->LastElement: ')
 
@@ -184,8 +192,8 @@ def getElement(lst, pos):
 
     Se recorre la lista hasta el elemento pos, el cual  debe ser mayor
     que cero y menor o igual al tamaño de la lista.
-    Se retorna el elemento en dicha posición sin eleminarlo.
-    La lista no puede ser vacia.
+    Se retorna el elemento en dicha posición sin eliminarlo.
+    La lista no puede ser vacía.
 
     Args:
         lst: La lista a examinar
@@ -195,7 +203,7 @@ def getElement(lst, pos):
         Exception
     """
     try:
-        return lt.getElement(lst, pos)
+        return lst['datastructure'].getElement(lst, pos)
     except Exception as exp:
         error.reraise(exp, 'List->getElement: ')
 
@@ -205,18 +213,18 @@ def deleteElement(lst, pos):
 
     Elimina el elemento que se encuentra en la posición pos de la lista.
     Pos debe ser mayor que cero y menor  o igual al tamaño de la lista.
-    Se decrementa en un uno el tamñao de la lista. La lista no puede
-    estar vacia.
+    Se decrementa en un uno el tamaño de la lista. La lista no puede
+    estar vacía.
 
     Args:
-        lst: La lista a retoranr
+        lst: La lista a retornar
         pos: Posición del elemento a eliminar.
 
     Raises:
         Exception
     """
     try:
-        lt.deleteElement(lst, pos)
+        lst['datastructure'].deleteElement(lst, pos)
     except Exception as exp:
         error.reraise(exp, 'TADList->deleteElement: ')
 
@@ -237,7 +245,7 @@ def removeFirst(lst):
         Exception
     """
     try:
-        return lt.removeFirst(lst)
+        return lst['datastructure'].removeFirst(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->removeFirst: ')
 
@@ -258,7 +266,7 @@ def removeLast(lst):
         Exception
     """
     try:
-        return lt.removeLast(lst)
+        return lst['datastructure'].removeLast(lst)
     except Exception as exp:
         error.reraise(exp, 'TADList->removeLast: ')
 
@@ -280,7 +288,7 @@ def insertElement(lst, element, pos):
         Exception
     """
     try:
-        lt.insertElement(lst, element, pos)
+        lst['datastructure'].insertElement(lst, element, pos)
     except Exception as exp:
         error.reraise(exp, 'TADList->insertElement: ')
 
@@ -302,43 +310,43 @@ def isPresent(lst, element):
         Exception
     """
     try:
-        return lt.isPresent(lst, element)
+        return lst['datastructure'].isPresent(lst, element)
     except Exception as exp:
         error.reraise(exp, 'TADList->isPresent: ')
 
 
 def exchange(lst, pos1, pos2):
-    """ Intercambia la informacion en las posiciones pos1 y pos2 de la lista.
+    """ Intercambia la información en las posiciones pos1 y pos2 de la lista.
 
     Args:
         lst: La lista a examinar
         pos1: Posición del primer elemento
-        pos2: Posiocion del segundo elemento
+        pos2: Posición del segundo elemento
 
     Raises:
         Exception
     """
     try:
-        lt.exchange(lst, pos1, pos2)
+        lst['datastructure'].exchange(lst, pos1, pos2)
     except Exception as exp:
         error.reraise(exp, 'List->exchange: ')
 
 
 def changeInfo(lst, pos, element):
-    """ Cambia la informacion contenida en el nodo de la lista
-        que se encuentra en la posicion pos.
+    """ Cambia la información contenida en el nodo de la lista
+        que se encuentra en la posición pos.
 
     Args:
         lst: La lista a examinar
         pos: la posición de la lista con la información a cambiar
-        newinfo: La nueva información que se debe poner en el nodo de
+        element: La nueva información que se debe poner en el nodo de
         la posición pos
 
     Raises:
         Exception
     """
     try:
-        lt.changeInfo(lst, pos, element)
+        lst['datastructure'].changeInfo(lst, pos, element)
     except Exception as exp:
         error.reraise(exp, 'List->changeInfo: ')
 
@@ -347,7 +355,7 @@ def subList(lst, pos, numelem):
     """ Retorna una sublista de la lista lst.
 
     Se retorna una lista que contiene los elementos a partir de la
-    posicion pos, con una longitud de numelem elementos.
+    posición pos, con una longitud de numelem elementos.
     Se crea una copia de dichos elementos y se retorna una lista nueva.
 
     Args:
@@ -359,7 +367,7 @@ def subList(lst, pos, numelem):
         Exception
     """
     try:
-        return lt.subList(lst, pos, numelem)
+        return lst['datastructure'].subList(lst, pos, numelem)
     except Exception as exp:
         error.reraise(exp, 'List->subList: ')
 
@@ -373,6 +381,33 @@ def iterator(lst):
         Exception
     """
     try:
-        return lt.iterator(lst)
+        return lst['datastructure'].iterator(lst)
     except Exception as exp:
         error.reraise(exp, 'List->Iterator: ')
+
+
+"""
+Selector dinámico de la estructura de datos solicitada
+"""
+
+switch_module = {
+    "ARRAY_LIST": ".arraylist",
+    "SINGLE_LINKED": ".singlelinkedlist",
+    "DOUBLE_LINKED": ".doublelinkedlist"
+}
+
+
+def listSelector(datastructure):
+    """
+    Carga dinámicamente el import de la estructura de datos
+    seleccionada
+    """
+    ds = switch_module.get(datastructure)
+
+    if ds is None:
+        raise Exception(
+           f"Tipo de estructura de datos no soportada. Solo se soportan: {', '.join(switch_module.keys())}"
+        )
+
+    module = importlib.import_module(ds, package="DISClib.DataStructures")
+    return module

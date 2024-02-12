@@ -46,7 +46,7 @@ Algorithms, 4th Edition
 # ________________________________________________________________________
 
 
-def newMap(cmpfunction):
+def newMap(omaptype, cmpfunction, datastructure):
     """
     Crea una tabla de simbolos ordenada.
     Args:
@@ -59,7 +59,8 @@ def newMap(cmpfunction):
     try:
         rbt = {'root': None,
                'cmpfunction': None,
-               'type': 'RBT'}
+               'type': omaptype,
+               'datastructure': datastructure}
 
         if(cmpfunction is None):
             rbt['cmpfunction'] = defaultfunction
@@ -422,7 +423,7 @@ def keys(rbt, keylo, keyhi):
         Exception
     """
     try:
-        lstkeys = lt.newList('SINGLELINKED', rbt['cmpfunction'])
+        lstkeys = lt.newList('SINGLE_LINKED', rbt['cmpfunction'])
         lstkeys = keysRange(rbt['root'], keylo, keyhi, lstkeys,
                             rbt['cmpfunction'])
         return lstkeys
@@ -445,7 +446,7 @@ def values(rbt, keylo, keyhi):
         Exception
     """
     try:
-        lstvalues = lt.newList('SINGLELINKED', rbt['cmpfunction'])
+        lstvalues = lt.newList('SINGLE_LINKED', rbt['cmpfunction'])
         lstvalues = valuesRange(rbt['root'], keylo, keyhi, lstvalues,
                                 rbt['cmpfunction'])
         return lstvalues
@@ -617,7 +618,7 @@ def sizeTree(root):
         error.reraise(exp, 'RBT:sizeTree')
 
 
-def insertNode(root, key, value, comparefunction):
+def insertNode(root, key, value, cmpfunction):
     """
     Ingresa una pareja llave,valor. Si la llave ya existe,
     se reemplaza el valor.
@@ -636,14 +637,14 @@ def insertNode(root, key, value, comparefunction):
             root = node.newNode(key, value, 1, node.RED)
             return root
 
-        cmp = comparefunction(key, root['key'])
+        cmp = cmpfunction(key, root['key'])
 
         if (cmp < 0):     # La llave a insertar es menor que la raiz
             root['left'] = insertNode(root['left'],  key, value,
-                                      comparefunction)
+                                      cmpfunction)
         elif (cmp > 0):    # La llave a insertar es mayor que la raíz
             root['right'] = insertNode(root['right'], key, value,
-                                       comparefunction)
+                                       cmpfunction)
         else:              # La llave ya se encuentra en la tabla
             root['value'] = value
 
@@ -682,7 +683,7 @@ def heightTree(root):
         error.reraise(exp, 'RBT:heightTree')
 
 
-def getNode(root, key, comparefunction):
+def getNode(root, key, cmpfunction):
     """
     Retorna la pareja llave, valor, cuya llave sea igual a key.
     Es necesario proveer una función de comparación para las llaves.
@@ -690,7 +691,7 @@ def getNode(root, key, comparefunction):
     Args:
         root: El arbol rojo-negro
         key: La llave de busqueda
-        comparefunction: funcion de comparación
+        cmpfunction: funcion de comparación
     Returns:
         La pareja llave-valor
     Raises:
@@ -699,11 +700,11 @@ def getNode(root, key, comparefunction):
     try:
         element = None
         if (root is not None):
-            cmp = comparefunction(key, root['key'])
+            cmp = cmpfunction(key, root['key'])
             if (cmp < 0):
-                element = getNode(root['left'], key, comparefunction)
+                element = getNode(root['left'], key, cmpfunction)
             elif (cmp > 0):
-                element = getNode(root['right'], key, comparefunction)
+                element = getNode(root['right'], key, cmpfunction)
             else:
                 element = root
         return element
@@ -764,7 +765,7 @@ def floorKey(root, key, cmpfunction):
     Args:
         rbt: El arbol de búsqueda
         key: La llave
-        comparefunction: Funcion de comparacion
+        cmpfunction: Funcion de comparacion
     Returns:
         Retorna la mayor llave de la tabla
     Raises:
@@ -795,7 +796,7 @@ def ceilingKey(root, key, cmpfunction):
     Args:
         rbt: El arbol de búsqueda
         key: La llave
-        comparefunction: Funcion de comparacion
+        cmpfunction: Funcion de comparacion
     Returns:
         Retorna la mayor llave de la tabla
     Raises:
@@ -818,7 +819,7 @@ def ceilingKey(root, key, cmpfunction):
         error.reraise(exp, 'BST:ceilingKey')
 
 
-def rankKeys(root, key, comparefunction):
+def rankKeys(root, key, cmpfunction):
     """
     Retorna el número de llaves en la tabla estrictamente menores que key
     Args:
@@ -832,12 +833,12 @@ def rankKeys(root, key, comparefunction):
     try:
         if (root is None):
             return 0
-        cmp = comparefunction(key, root['key'])
+        cmp = cmpfunction(key, root['key'])
         if (cmp < 0):
-            return rankKeys(root['left'], key, comparefunction)
+            return rankKeys(root['left'], key, cmpfunction)
         elif (cmp > 0):
             lsize = sizeTree(root['left'])
-            rank = rankKeys(root['right'], key, comparefunction)
+            rank = rankKeys(root['right'], key, cmpfunction)
             return 1 + lsize + rank
         else:
             return sizeTree(root['left'])

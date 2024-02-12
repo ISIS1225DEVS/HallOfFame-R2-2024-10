@@ -35,7 +35,7 @@ from DISClib.Utils import error as error
 assert config
 
 
-def BreadhtFisrtSearch(graph, source):
+def BreathFirstSearch(graph, source):
     """
     Genera un recorrido BFS sobre el grafo graph
     Args:
@@ -54,7 +54,7 @@ def BreadhtFisrtSearch(graph, source):
                   }
         search['visited'] = map.newMap(numelements=g.numVertices(graph),
                                        maptype='PROBING',
-                                       comparefunction=graph['comparefunction']
+                                       cmpfunction=graph['cmpfunction']
                                        )
         map.put(search['visited'], source, {'marked': True,
                                             'edgeTo': None,

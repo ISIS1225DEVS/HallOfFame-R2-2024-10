@@ -3,7 +3,7 @@
  * Universidad de Los Andes
  *
  *
- * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
+ * Desarrollado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -47,3 +47,15 @@ def getElement(node):
       La información almacenada en el nodo
     """
     return node['info']
+
+
+def newDoubleNode(element):
+    """
+    Estructura que contiene la información a guardar en una lista encadenada
+    doblemente
+    """
+    node = {'info': element,
+            'next': None,
+            'prev': None
+            }
+    return node

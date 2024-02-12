@@ -41,8 +41,8 @@ assert config
 """
 
 
-def newList(cmpfunction, key, filename, delim):
-    """Crea una lista vacia.
+def newList(cmpfunction, module, key, filename, delim):
+    """Crea una lista vacía.
 
     Args:
         cmpfunction: Función de comparación para los elementos de la lista
@@ -56,7 +56,8 @@ def newList(cmpfunction, key, filename, delim):
                'size': 0,
                'type': 'ARRAY_LIST',
                'cmpfunction': cmpfunction,
-               'key': key
+               'key': key,
+               'datastructure': module
                }
 
     if(cmpfunction is None):
@@ -73,7 +74,7 @@ def newList(cmpfunction, key, filename, delim):
 
 
 def addFirst(lst, element):
-    """Agrega un elemento a la lista en la primera posicion.
+    """Agrega un elemento a la lista en la primera posición.
 
     Agrega un elemento en la primera posición de la lista, se incrementa
     el tamaño de la lista en uno.
@@ -100,7 +101,7 @@ def addLast(lst, element):
     """ Agrega un elemento en la última posición de la lista.
 
     Se adiciona un elemento en la última posición de la lista y se actualiza
-    el apuntador a la útima posición. Se incrementa el tamaño de la lista en 1
+    el apuntador a la última posición. Se incrementa el tamaño de la lista en 1
 
     Args:
         lst: La lista en la que se inserta el elemento
@@ -163,7 +164,7 @@ def firstElement(lst):
 
 
 def lastElement(lst):
-    """ Retorna el último elemento de una  lista no vacia.
+    """ Retorna el último elemento de una  lista no vacía.
         No se elimina el elemento.
 
     Args:
@@ -183,8 +184,8 @@ def getElement(lst, pos):
 
     Se recorre la lista hasta el elemento pos, el cual  debe ser mayor
     que cero y menor o igual al tamaño de la lista.
-    Se retorna el elemento en dicha posición sin eleminarlo.
-    La lista no puede ser vacia.
+    Se retorna el elemento en dicha posición sin eliminarlo.
+    La lista no puede ser vacía.
 
     Args:
         lst: La lista a examinar
@@ -204,11 +205,11 @@ def deleteElement(lst, pos):
 
     Elimina el elemento que se encuentra en la posición pos de la lista.
     Pos debe ser mayor que cero y menor  o igual al tamaño de la lista.
-    Se decrementa en un uno el tamñao de la lista.
-    La lista no puede estar vacia.
+    Se decrementa en un uno el tamaño de la lista.
+    La lista no puede estar vacía.
 
     Args:
-        lst: La lista a retoranr
+        lst: La lista a retornar
         pos: Posición del elemento a eliminar.
 
     Raises:
@@ -260,7 +261,7 @@ def removeLast(lst):
         lst['size'] -= 1
         return element
     except Exception as exp:
-        error.reraise(exp, 'arraylist->remoLast: ')
+        error.reraise(exp, 'arraylist->removeLast: ')
 
 
 def insertElement(lst, element, pos):
@@ -319,8 +320,8 @@ def isPresent(lst, e):
 
 
 def changeInfo(lst, pos, newinfo):
-    """ Cambia la informacion contenida en el nodo de la lista
-        que se encuentra en la posicion pos.
+    """ Cambia la información contenida en el nodo de la lista
+        que se encuentra en la posición pos.
 
     Args:
         lst: La lista a examinar
@@ -338,12 +339,12 @@ def changeInfo(lst, pos, newinfo):
 
 
 def exchange(lst, pos1, pos2):
-    """ Intercambia la informacion en las posiciones pos1 y pos2 de la lista.
+    """ Intercambia la información en las posiciones pos1 y pos2 de la lista.
 
     Args:
         lst: La lista a examinar
         pos1: Posición del primer elemento
-        pos2: Posiocion del segundo elemento
+        pos2: Posición del segundo elemento
 
     Raises:
         Exception
@@ -361,7 +362,7 @@ def exchange(lst, pos1, pos2):
 def subList(lst, pos, numelem):
     """ Retorna una sublista de la lista lst.
 
-    Se retorna una lista que contiene los elementos a partir de la posicion
+    Se retorna una lista que contiene los elementos a partir de la posición
     pos, con una longitud de numelem elementos.
     Se crea una copia de dichos elementos y se retorna una lista nueva.
 
@@ -378,6 +379,7 @@ def subList(lst, pos, numelem):
                   'size': 0,
                   'type': 'ARRAY_LIST',
                   'key': lst['key'],
+                  'datastructure': lst['datastructure'],
                   'cmpfunction': lst['cmpfunction']}
         elem = pos-1
         cont = 1
@@ -417,7 +419,7 @@ def compareElements(lst, element, info):
         element:  El elemento que se esta buscando en la lista
         info: El elemento de la lista que se está analizando
 
-    Returns:  0 si los elementos son iguales
+    Returns:  0 si los elementos son iguales, 1 si element > info, -1 si element < info
 
     Raises:
         Exception

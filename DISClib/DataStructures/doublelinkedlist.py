@@ -3,7 +3,7 @@
  * Universidad de Los Andes
  *
  *
- * Desarrollado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
+ * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
  *
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,27 +24,23 @@
  """
 
 import config
-from DISClib.DataStructures import listnode as node
+from DISClib.DataStructures import listnode as lknode
 from DISClib.Utils import error as error
 import csv
 assert config
 
 """
   Este módulo implementa una estructura de datos lineal mediante una lista
-  encadenada sencillamente para almacenar una colección de elementos.
+  encadenada doblemente para almacenar una colección de elementos.
   Los elementos se cuentan desde la posición 1.
-
-  Este código está basado en la implementación
-  propuesta por R.Sedgewick y Kevin Wayne en su libro
-  Algorithms, 4th Edition
 """
 
 
-def newList(cmpfunction, module, key, filename, delim):
-    """Crea una lista vacía.
+def newList(cmpfunction, module,  key, filename, delim):
+    """Crea una lista vacia.
 
-    Se inicializan los apuntadores a la primera y última posición en None.
-    El tipo de la lista se inicializa como SINGLE_LINKED
+    Se inicializan los apuntadores a la primera y ultima posicion en None.
+    El tipo de la listase inicializa como SINGLE_LINKED
     Args:
         cmpfunction: Función de comparación para los elementos de la lista.
         Si no se provee una función de comparación, se utilizará la función
@@ -54,14 +50,14 @@ def newList(cmpfunction, module, key, filename, delim):
         elementos de la lista
 
         filename: Si se provee este valor, se creará una lista a partir de
-        la información que se encuentra en el archivo CSV
+        la informacion que se encuentra en el archivo CSV
 
         delimiter: Si se provee un archivo para crear la lista, indica el
         delimitador a usar para separar los campos del archivo CSV
 
     Returns:
         Un diccionario que representa la estructura de datos de una lista
-        encadenada vacía.
+        encadanada vacia.
 
     Raises:
 
@@ -70,7 +66,7 @@ def newList(cmpfunction, module, key, filename, delim):
                'last': None,
                'size': 0,
                'key': key,
-               'type': 'SINGLE_LINKED',
+               'type': 'DOUBLE_LINKED',
                'datastructure': module
                }
 
@@ -88,7 +84,7 @@ def newList(cmpfunction, module, key, filename, delim):
 
 
 def addFirst(lst, element):
-    """Agrega un elemento a la lista en la primera posición.
+    """Agrega un elemento a la lista en la primera posicion.
 
     Agrega un elemento en la primera posición de la lista, ajusta el apuntador
     al primer elemento e incrementa el tamaño de la lista.
@@ -105,22 +101,26 @@ def addFirst(lst, element):
         Exception
     """
     try:
-        new_node = node.newSingleNode(element)
-        new_node['next'] = lst['first']
-        lst['first'] = new_node
+        new_node = lknode.newDoubleNode(element)
+
         if (lst['size'] == 0):
-            lst['last'] = lst['first']
+            lst['last'] = new_node
+            lst['first'] = new_node
+        else:
+            new_node['next'] = lst['first']
+            lst['first'] = new_node
+
         lst['size'] += 1
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->addFirst: ')
+        error.reraise(exp, 'doublelinkedlist->addFirst: ')
 
 
 def addLast(lst, element):
     """ Agrega un elemento en la última posición de la lista.
 
     Se adiciona un elemento en la última posición de la lista y se actualiza
-     el apuntador a la última posición.
+     el apuntador a la útima posición.
     Se incrementa el tamaño de la lista en 1
     Args:
         lst: La lista en la que se inserta el elemento
@@ -130,17 +130,18 @@ def addLast(lst, element):
         Exception
     """
     try:
-        new_node = node.newSingleNode(element)
+        new_node = lknode.newDoubleNode(element)
 
         if lst['size'] == 0:
             lst['first'] = new_node
         else:
+            new_node['prev'] = lst['last']
             lst['last']['next'] = new_node
         lst['last'] = new_node
         lst['size'] += 1
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->addLast: ')
+        error.reraise(exp, 'doublelinkedlist->addLast: ')
 
 
 def isEmpty(lst):
@@ -154,7 +155,7 @@ def isEmpty(lst):
     try:
         return lst['size'] == 0
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->isEmpty: ')
+        error.reraise(exp, 'doublelinkedlist->isEmpty: ')
 
 
 def size(lst):
@@ -168,7 +169,7 @@ def size(lst):
     try:
         return lst['size']
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->size: ')
+        error.reraise(exp, 'doublelinkedlist->size: ')
 
 
 def firstElement(lst):
@@ -184,13 +185,12 @@ def firstElement(lst):
     try:
         if lst['first'] is not None:
             return lst['first']['info']
-        return None
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->firstElement: ')
+        error.reraise(exp, 'doublelinkedlist->fisrtElement: ')
 
 
 def lastElement(lst):
-    """ Retorna el último elemento de una  lista no vacía.
+    """ Retorna el último elemento de una  lista no vacia.
         No se elimina el elemento.
 
     Args:
@@ -202,9 +202,8 @@ def lastElement(lst):
     try:
         if lst['last'] is not None:
             return lst['last']['info']
-        return None
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->lastElement: ')
+        error.reraise(exp, 'doublelinkedlist->lastElement: ')
 
 
 def getElement(lst, pos):
@@ -212,8 +211,8 @@ def getElement(lst, pos):
 
     Se recorre la lista hasta el elemento pos, el cual  debe ser
     mayor que cero y menor o igual al tamaño de la lista.
-    Se retorna el elemento en dicha posición sin eliminarlo.
-    La lista no puede ser vacía.
+    Se retorna el elemento en dicha posición sin eleminarlo.
+    La lista no puede ser vacia.
 
     Args:
         lst: La lista a examinar
@@ -230,7 +229,7 @@ def getElement(lst, pos):
             node = node['next']
         return node['info']
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->getElement: ')
+        error.reraise(exp, 'doublelinkedlist->getElement: ')
 
 
 def deleteElement(lst, pos):
@@ -238,33 +237,42 @@ def deleteElement(lst, pos):
 
     Elimina el elemento que se encuentra en la posición pos de la lista.
     Pos debe ser mayor que cero y menor o igual al tamaño de la lista.
-    Se decrementa en un uno el tamaño de la lista.
-    La lista no puede estar vacía.
+    Se decrementa en un uno el tamñao de la lista.
+    La lista no puede estar vacia.
 
     Args:
-        lst: La lista a retornar
+        lst: La lista a retoranr
         pos: Posición del elemento a eliminar.
 
     Raises:
         Exception
     """
     try:
+        if (lst['size'] == 1) and (pos == 1):
+            lst['first'] = None
+            lst['last'] = None
+
         node = lst['first']
-        prev = lst['first']
         searchpos = 1
-        if (pos == 1):
-            lst['first'] = lst['first']['next']
-            lst['size'] -= 1
-        elif(pos > 1):
-            while searchpos < pos:
-                searchpos += 1
-                prev = node
-                node = node['next']
-            prev['next'] = node['next']
-            lst['size'] -= 1
+
+        while searchpos < pos:
+            searchpos += 1
+            node = node['next']
+        prev = node['prev']
+        sig = node['next']
+
+        if (prev is not None):
+            prev['next'] = sig
+        if (sig is not None):
+            sig['prev'] = prev
+
+        if(pos == lst['size']):
+            lst['last'] = prev
+
+        lst['size'] -= 1
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->deleteElement: ')
+        error.reraise(exp, 'doublelinkedlist->deleteElement: ')
 
 
 def removeFirst(lst):
@@ -290,7 +298,7 @@ def removeFirst(lst):
         else:
             return None
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->removeFirst: ')
+        error.reraise(exp, 'doublelinkedlist->removeFirst: ')
 
 
 def removeLast(lst):
@@ -313,18 +321,17 @@ def removeLast(lst):
                 lst['last'] = None
                 lst['first'] = None
             else:
-                temp = lst['first']
-                while temp['next'] != lst['last']:
-                    temp = temp['next']
+                temp = lst['last']['prev']
                 node = lst['last']
                 lst['last'] = temp
-                lst['last']['next'] = None
+                if (temp is not None):
+                    lst['last']['next'] = None
             lst['size'] -= 1
             return node['info']
         else:
             return None
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->remoLast: ')
+        error.reraise(exp, 'doublelinkedlist->remoLast: ')
 
 
 def insertElement(lst, element, pos):
@@ -343,30 +350,36 @@ def insertElement(lst, element, pos):
         Exception
     """
     try:
-        new_node = node.newSingleNode(element)
-        if (lst['size'] == 0):
-            lst['first'] = new_node
-            lst['last'] = new_node
+        new_node = lknode.newDoubleNode(element)
 
-        elif ((lst['size'] > 0) and (pos == 1)):
+        if (pos == 1):
             new_node['next'] = lst['first']
+            if (lst['first'] is not None):
+                lst['first']['prev'] = new_node
+            else:
+                lst['last'] = new_node
             lst['first'] = new_node
-
         else:
-            cont = 1
-            prev = lst['first']
-            current = lst['first']
-            while cont < pos:
-                prev = current
-                current = current['next']
-                cont += 1
-            new_node['next'] = current
-            prev['next'] = new_node
+            searchpos = 1
+            node = lst['first']
+
+            while searchpos < pos:
+                searchpos += 1
+                node = node['next']
+            prev = node['prev']
+
+            if (prev is not None):
+                prev['next'] = new_node
+                new_node['prev'] = prev
+                new_node['next'] = node
+
+            if(pos == lst['size']):
+                lst['last'] = new_node
 
         lst['size'] += 1
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->insertElement: ')
+        error.reraise(exp, 'doublelinkedlist->insertElement: ')
 
 
 def isPresent(lst, element):
@@ -400,12 +413,12 @@ def isPresent(lst, element):
                 return keypos
         return 0
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->isPresent: ')
+        error.reraise(exp, 'doublelinkedlist->isPresent: ')
 
 
 def changeInfo(lst, pos, newinfo):
-    """ Cambia la información contenida en el nodo de la lista que se encuentra
-         en la posición pos.
+    """ Cambia la informacion contenida en el nodo de la lista que se encuentra
+         en la posicion pos.
 
     Args:
         lst: La lista a examinar
@@ -425,16 +438,16 @@ def changeInfo(lst, pos, newinfo):
         current['info'] = newinfo
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->changeInfo: ')
+        error.reraise(exp, 'doublelinkedlist->changeInfo: ')
 
 
 def exchange(lst, pos1, pos2):
-    """ Intercambia la información en las posiciones pos1 y pos2 de la lista.
+    """ Intercambia la informacion en las posiciones pos1 y pos2 de la lista.
 
     Args:
         lst: La lista a examinar
         pos1: Posición del primer elemento
-        pos2: Posición del segundo elemento
+        pos2: Posiocion del segundo elemento
 
     Raises:
         Exception
@@ -446,14 +459,14 @@ def exchange(lst, pos1, pos2):
         changeInfo(lst, pos2, infopos1)
         return lst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->exchange: ')
+        error.reraise(exp, 'doublelinkedlist->exchange: ')
 
 
 def subList(lst, pos, numelem):
     """ Retorna una sublista de la lista lst.
 
     Se retorna una lista que contiene los elementos a partir de la
-    posición pos,con una longitud de numelem elementos.
+    posicion pos,con una longitud de numelem elementos.
     Se crea una copia de dichos elementos y se retorna una lista nueva.
 
     Args:
@@ -468,7 +481,7 @@ def subList(lst, pos, numelem):
         sublst = {'first': None,
                   'last': None,
                   'size': 0,
-                  'type': 'SINGLE_LINKED',
+                  'type': 'DOUBLE_LINKED',
                   'key': lst['key'],
                   'datastructure': lst['datastructure'],
                   'cmpfunction': lst['cmpfunction']}
@@ -481,7 +494,7 @@ def subList(lst, pos, numelem):
             cont += 1
         return sublst
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->subList: ')
+        error.reraise(exp, 'doublelinkedlist->subList: ')
 
 
 def iterator(lst):
@@ -499,7 +512,7 @@ def iterator(lst):
                 yield current['info']
                 current = current['next']
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->Iterator')
+        error.reraise(exp, 'doublelinkedlist->Iterator')
 
 
 def compareElements(lst, element, info):
@@ -523,7 +536,7 @@ def compareElements(lst, element, info):
         else:
             return lst['cmpfunction'](element, info)
     except Exception as exp:
-        error.reraise(exp, 'singlelinkedlist->compareElements')
+        error.reraise(exp, 'doublelinkedlist->compareElements')
 
 
 def defaultfunction(id1, id2):

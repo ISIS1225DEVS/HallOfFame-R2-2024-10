@@ -1,6 +1,6 @@
 """
  * Copyright 2020, Departamento de sistemas y Computación,
- *  Universidad de Los Andes
+ * Universidad de Los Andes
  *
  *
  * Desarrolado para el curso ISIS1225 - Estructuras de Datos y Algoritmos
@@ -21,32 +21,34 @@
  *
  * Contribución de:
  *
- * Dario Correal
+ * Eric Alarcon Dolynko
  *
  """
 
 import config as cf
+import random
 from DISClib.ADT import list as lt
 assert cf
 
-"""
-  Los algoritmos de este libro están basados en la implementación
-  propuesta por R.Sedgewick y Kevin Wayne en su libro
-  Algorithms, 4th Edition
-"""
+def sort(lst,size):
+    
+    for pos in range(1,size):
+        random_pos = random.randint(1,size)
+        lt.exchange(lst,pos,random_pos)
+        
+    return lst
 
+def is_sorted(lst,sort_crit,size):
+    
+    for pos in range(1,size):
+        if sort_crit(lt.getElement(lst,pos),lt.getElement(lst,pos+1)) != True:
+            return False
+        
+    return True
 
-def sort(lst, sort_crit):
+def bogosort(lst,sort_crit):
+
     size = lt.size(lst)
-    pos1 = 1
-    while pos1 < size:
-        minimum = pos1    # minimun tiene el menor elemento
-        pos2 = pos1 + 1
-        while (pos2 <= size):
-            if (sort_crit(lt.getElement(lst, pos2),
-               (lt.getElement(lst, minimum)))):
-                minimum = pos2  # minimum = posición elemento más pequeño
-            pos2 += 1
-        lt.exchange(lst, pos1, minimum)  # elemento más pequeño -> elem pos1
-        pos1 += 1
+    while is_sorted(lst,sort_crit,size) != True:
+        lst = sort(lst,size)
     return lst
