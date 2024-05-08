@@ -1,3 +1,4 @@
 # INTEGRANTES
-<!-- aqui van los nombres de los integrantes -->
-TODO
+Pablo Ramirez - 202321722
+Manuel Ricardo Torres - 202321428
+Tomas Torres - 202313980
